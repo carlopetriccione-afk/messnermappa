@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Cronologia di Reinhold Messner</title>
+  <meta name="description" content="La vita e le imprese di Reinhold Messner in una linea del tempo realizzata con TimelineJS di Knight Lab.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+  <!-- TimelineJS 3.9.13 (Knight Lab, Northwestern University), versione fissata -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@knight-lab/timelinejs@3.9.13/dist/css/timeline.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-head">
+    <div class="brand">
+      <h1>Reinhold Messner</h1>
+      <span>I luoghi di una vita verticale</span>
+    </div>
+    <nav aria-label="Sezioni">
+      <a href="index.html">Mappa</a>
+      <a href="cronologia.html" aria-current="page">Cronologia</a>
+      <a href="progetto.html">Il progetto</a>
+    </nav>
+  </header>
+
+  <main class="stage">
+    <div class="timeline-wrap">
+      <div id="timeline"></div>
+      <div class="legend" id="legend" aria-label="Legenda delle categorie"></div>
+    </div>
+    <div class="loading" id="loading">
+      <strong>Carico le foto da Wikimedia Commons</strong>
+      <div class="bar"><i id="bar"></i></div>
+      <span id="count">0 / 0</span>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@knight-lab/timelinejs@3.9.13/dist/js/timeline.js"></script>
+  <script src="data.js"></script>
+  <script src="media.js"></script>
+  <script>
+    (async function () {
+      try {
+      const D = window.MESSNER;
+      const intro = { wiki: D.introWiki };
+      const all = [intro].concat(D.places);
+
+      await resolvePhotos(all, function (n, tot) {
+        document.getElementById("bar").style.width = (100 * n / tot) + "%";
+        document.getElementById("count").textContent = n + " / " + tot;
+      });
+
+      function media(p, caption) {
+        if (!p) return undefined;
+        // TimelineJS scambia alcuni indirizzi di upload.wikimedia.org per articoli di Wikipedia.
+        // Il suo controllo distingue maiuscole e minuscole: con "HTTPS://" la foto viene
+        // trattata come immagine semplice, mentre il browser la carica normalmente.
+        const imgUrl = p.url.replace(/^https:\/\//i, "HTTPS://");
+        return { url: imgUrl, credit: photoCredit(p), caption: caption || "", thumbnail: p.url };
+      }
+
+      // un colore per categoria (le classi sono definite in style.css)
+      const GROUP_CLASS = {
+        "Gli Ottomila": "g-ottomila",
+        "Roccia e Dolomiti": "g-roccia",
+        "Grandi traversate": "g-traversate",
+        "Vita": "g-vita",
+        "Musei": "g-musei"
+      };
+      document.getElementById("legend").innerHTML = Object.keys(GROUP_CLASS).map(function (g) {
+        return "<span class='" + GROUP_CLASS[g] + "'><i></i>" + g + "</span>";
+      }).join("");
+
+      const data = {
+        title: {
+          text: { headline: D.title, text: "<p>" + D.intro + "</p>" },
+          media: media(intro.photo, "Reinhold Messner")
+        },
+        events: D.places.map(function (p) {
+          const ev = {
+            start_date: { year: p.date.year },
+            group: p.group,
+            text: {
+              headline: p.headline,
+              text: "<p class='meta-line'>" + p.place + " · <a href='index.html'>vedi sulla mappa</a></p><p>" + p.text + "</p>"
+            },
+            media: media(p.photo, p.headline),
+            unique_id: p.id
+          };
+          if (p.date.month) ev.start_date.month = p.date.month;
+          if (p.date.day) ev.start_date.day = p.date.day;
+          return ev;
+        })
+      };
+
+      window.timeline = new TL.Timeline("timeline", data, {
+        language: "it",
+        initial_zoom: 2,
+        timenav_height_percentage: 38,
+        hash_bookmark: true
+      });
+
+      // TimelineJS non segna la categoria sulle schede: la aggiungo io,
+      // ogni volta che ridisegna la barra dei tempi.
+      function colorGroups() {
+        D.places.forEach(function (p) {
+          const el = document.getElementById(p.id + "-marker");
+          if (el && GROUP_CLASS[p.group] && !el.classList.contains(GROUP_CLASS[p.group])) {
+            el.classList.add(GROUP_CLASS[p.group]);
+          }
+        });
+        document.querySelectorAll(".tl-timegroup").forEach(function (band) {
+          const msg = band.querySelector(".tl-timegroup-message");
+          const cls = msg && GROUP_CLASS[msg.textContent.trim()];
+          if (cls && !band.classList.contains(cls)) band.classList.add(cls);
+        });
+      }
+      let pending = false;
+      new MutationObserver(function () {
+        if (pending) return;
+        pending = true;
+        requestAnimationFrame(function () { pending = false; colorGroups(); });
+      }).observe(document.getElementById("timeline"), { childList: true, subtree: true });
+      colorGroups();
+      document.getElementById("loading").hidden = true;
+      } catch (err) {
+        document.getElementById("loading").innerHTML = "<strong>Impossibile avviare TimelineJS</strong><span>" + err + "</span><span>Controlla la connessione a internet e ricarica la pagina.</span>";
+        console.error(err);
+      }
+    })();
+  </script>
+</body>
+</html>

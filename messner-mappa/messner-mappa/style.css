@@ -1,0 +1,230 @@
+/* Layout: testata sottile con il segnavia bianco-rosso-bianco, poi lo strumento Knight Lab a tutta pagina */
+:root {
+  --rock: #2b2f33;        /* testo, roccia scura */
+  --rock-soft: #5d646b;   /* testo secondario */
+  --snow: #f6f7f5;        /* fondo, neve sporca */
+  --line: #d9dcd8;        /* filetti */
+  --marker: #c4122f;      /* rosso dei segnavia alpini */
+  --ice: #2f6f8f;         /* link, ghiaccio */
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif;
+  --body: "Source Serif 4", Georgia, serif;
+  --ui: "Barlow", "Helvetica Neue", Arial, sans-serif;
+}
+
+html, body { height: 100%; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  background: var(--snow);
+  color: var(--rock);
+  font-family: var(--body);
+  display: flex;
+  flex-direction: column;
+}
+
+.site-head {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+}
+/* segnavia CAI: bianco-rosso-bianco */
+.site-head::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -7px;
+  height: 6px;
+  background: linear-gradient(to bottom, #fff 0 33%, var(--marker) 33% 67%, #fff 67% 100%);
+  border-bottom: 1px solid var(--line);
+  z-index: 5;
+}
+.brand { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.brand h1 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.7rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+.brand span { font-family: var(--ui); color: var(--rock-soft); font-size: 0.95rem; }
+
+nav { display: flex; gap: 4px; font-family: var(--ui); }
+nav a {
+  color: var(--rock);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 3px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+nav a:hover, nav a:focus-visible { background: var(--snow); outline: none; }
+nav a[aria-current="page"] { color: #fff; background: var(--marker); }
+
+.stage { flex: 1; min-height: 0; position: relative; margin-top: 7px; }
+#storymap, #timeline { width: 100%; height: 100%; }
+
+/* schermata di caricamento */
+.loading {
+  position: absolute; inset: 0;
+  display: grid; place-content: center; gap: 12px;
+  text-align: center;
+  font-family: var(--ui);
+  color: var(--rock-soft);
+  background: var(--snow);
+  z-index: 10;
+}
+.loading strong { font-family: var(--display); font-size: 1.6rem; color: var(--rock); text-transform: uppercase; letter-spacing: 0.04em; }
+.loading .bar { width: 220px; height: 4px; background: var(--line); margin: 0 auto; }
+.loading .bar i { display: block; height: 100%; width: 0; background: var(--marker); transition: width .2s; }
+
+/* ritocchi tipografici dentro StoryMapJS e TimelineJS */
+.vco-storymap, .tl-timeline { font-family: var(--body) !important; }
+.vco-storymap h2.vco-headline-title, .vco-storymap .vco-headline,
+.tl-timeline h2.tl-headline, .tl-timeline h2.tl-headline-title {
+  font-family: var(--display) !important;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.vco-storymap .vco-text-date, .tl-timeline .tl-headline-date { font-family: var(--ui) !important; color: var(--marker) !important; }
+.meta-line { font-family: var(--ui); color: var(--rock-soft); font-size: 0.9em; margin: 0 0 0.6em; }
+
+/* pagina "Il progetto" */
+.page { flex: 1; overflow: auto; margin-top: 7px; }
+.page article {
+  max-width: 68ch;
+  margin: 0 auto;
+  padding-block: 32px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  line-height: 1.6;
+  font-size: 1.05rem;
+}
+.page h2 {
+  font-family: var(--display);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 1.5rem;
+  margin: 2em 0 0.4em;
+  text-wrap: balance;
+}
+.page h2:first-child { margin-top: 0; }
+.page a { color: var(--ice); }
+.page table { border-collapse: collapse; width: 100%; font-family: var(--ui); font-size: 0.95rem; }
+.page th, .page td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.page th { font-weight: 600; }
+.page code { font-size: 0.9em; background: #fff; border: 1px solid var(--line); padding: 0 4px; border-radius: 2px; }
+.table-wrap { overflow-x: auto; }
+.stats { display: flex; flex-wrap: wrap; gap: 24px; font-family: var(--ui); margin: 1em 0; }
+.stats div { display: grid; }
+.stats b { font-family: var(--display); font-size: 2rem; line-height: 1; font-variant-numeric: tabular-nums; }
+.stats span { color: var(--rock-soft); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; }
+#credits li { margin-bottom: 0.4em; }
+
+@media (max-width: 520px) {
+  .brand span { display: none; }
+  nav a { padding: 6px 8px; font-size: 0.85rem; }
+}
+
+/* ---------- Cronologia: barra dei tempi più leggibile ---------- */
+.timeline-wrap { display: flex; flex-direction: column; height: 100%; }
+.timeline-wrap #timeline { flex: 1; min-height: 0; }
+
+/* un colore per ogni categoria */
+.g-ottomila  { --g: #b3261e; --g-tint: rgba(179, 38, 30, 0.07); }
+.g-roccia    { --g: #a8641f; --g-tint: rgba(168, 100, 31, 0.08); }
+.g-traversate{ --g: #2f6f8f; --g-tint: rgba(47, 111, 143, 0.08); }
+.g-vita      { --g: #3f7a4a; --g-tint: rgba(63, 122, 74, 0.08); }
+.g-musei     { --g: #6b4f8a; --g-tint: rgba(107, 79, 138, 0.08); }
+
+.tl-timenav { background: #fff; border-top: 1px solid var(--line); }
+
+/* fasce dei settori */
+.tl-timegroup, .tl-timegroup.tl-timegroup-alternate {
+  background-color: var(--g-tint, #f2f3f1) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.tl-timegroup .tl-timegroup-message {
+  color: var(--g, var(--rock)) !important;
+  text-shadow: none !important;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
+  margin-left: 16px !important;
+}
+
+/* schede sulla barra */
+.tl-timemarker .tl-timemarker-content-container {
+  background-color: #fff !important;
+  border: 1px solid #c9ced1 !important;
+  border-left: 4px solid var(--g, #8a9298) !important;
+}
+.tl-timemarker .tl-timemarker-content-container .tl-timemarker-content .tl-timemarker-text h2.tl-headline,
+.tl-timemarker .tl-timemarker-content-container .tl-timemarker-content .tl-timemarker-text h2.tl-headline p {
+  color: var(--rock) !important;
+  font-family: var(--ui) !important;
+  font-weight: 600;
+}
+.tl-timemarker:hover .tl-timemarker-content-container,
+.tl-timemarker:focus .tl-timemarker-content-container {
+  border-color: var(--g, var(--rock)) !important;
+}
+.tl-timemarker.tl-timemarker-active .tl-timemarker-content-container {
+  background-color: var(--g, var(--rock)) !important;
+  border-color: var(--g, var(--rock)) !important;
+}
+.tl-timemarker.tl-timemarker-active .tl-timemarker-content-container .tl-timemarker-content .tl-timemarker-text h2.tl-headline,
+.tl-timemarker.tl-timemarker-active .tl-timemarker-content-container .tl-timemarker-content .tl-timemarker-text h2.tl-headline p {
+  color: #fff !important;
+}
+.tl-timemarker .tl-timemarker-line-left,
+.tl-timemarker .tl-timemarker-line-left:after {
+  border-color: var(--g, #8a9298) !important;
+  background-color: var(--g, #8a9298) !important;
+  box-shadow: none !important;
+  opacity: 0.7;
+}
+.tl-timemarker.tl-timemarker-active .tl-timemarker-line-left,
+.tl-timemarker.tl-timemarker-active .tl-timemarker-line-left:after { opacity: 1; }
+
+/* asse degli anni */
+.tl-timeaxis .tl-timeaxis-content-container .tl-timeaxis-major .tl-timeaxis-tick .tl-timeaxis-tick-text,
+.tl-timeaxis .tl-timeaxis-content-container .tl-timeaxis-minor .tl-timeaxis-tick .tl-timeaxis-tick-text {
+  color: var(--rock-soft) !important;
+  font-family: var(--ui) !important;
+  font-variant-numeric: tabular-nums;
+}
+.tl-timeaxis .tl-timeaxis-content-container .tl-timeaxis-major .tl-timeaxis-tick .tl-timeaxis-tick-text {
+  color: var(--rock) !important;
+  font-weight: 600;
+}
+
+/* legenda fissa sotto la barra */
+.legend {
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  padding-block: 8px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  background: #fff;
+  border-top: 1px solid var(--line);
+  font-family: var(--ui);
+  font-size: 0.9rem;
+  color: var(--rock);
+}
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 14px; height: 14px; border-radius: 2px; background: var(--g); }

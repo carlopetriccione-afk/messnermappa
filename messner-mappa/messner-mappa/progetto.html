@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Il progetto · Mappa di Reinhold Messner</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-head">
+    <div class="brand">
+      <h1>Reinhold Messner</h1>
+      <span>I luoghi di una vita verticale</span>
+    </div>
+    <nav aria-label="Sezioni">
+      <a href="index.html">Mappa</a>
+      <a href="cronologia.html">Cronologia</a>
+      <a href="progetto.html" aria-current="page">Il progetto</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <article>
+      <h2>Il progetto</h2>
+      <p>
+        Esercitazione per il Laboratorio di Digital Humanities, corso di laurea in Lettere,
+        Università di Macerata, a.a. 2026/2027. Autore: Carlo Petriccione.
+      </p>
+      <p>
+        Il sito racconta la biografia di Reinhold Messner attraverso lo spazio e il tempo.
+        La stessa raccolta di dati alimenta due visualizzazioni: una <a href="index.html">mappa narrativa</a>
+        che segue i luoghi uno dopo l'altro e una <a href="cronologia.html">linea del tempo</a>
+        che li ordina per anno e per tema. L'obiettivo è mostrare come una vita legata alla geografia
+        si legga in modo diverso a seconda che la si disponga sulla carta o sulla cronologia.
+      </p>
+      <div class="stats" id="stats"></div>
+
+      <h2>Strumenti</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Strumento</th><th>Uso nel progetto</th></tr>
+          <tr><td><a href="https://storymap.knightlab.com/" target="_blank" rel="noopener">StoryMapJS</a> (Knight Lab)</td><td>Mappa narrativa a schede</td></tr>
+          <tr><td><a href="https://timeline.knightlab.com/" target="_blank" rel="noopener">TimelineJS</a> (Knight Lab)</td><td>Linea del tempo divisa per temi</td></tr>
+          <tr><td><a href="https://opentopomap.org/" target="_blank" rel="noopener">OpenTopoMap</a> su dati OpenStreetMap</td><td>Base cartografica con rilievo e curve di livello</td></tr>
+          <tr><td>API REST di Wikipedia</td><td>Individuazione dell'immagine principale di ogni voce</td></tr>
+          <tr><td>API di Wikimedia Commons</td><td>Autore e licenza di ogni fotografia</td></tr>
+        </table>
+      </div>
+
+      <h2>Modello dei dati</h2>
+      <p>
+        I contenuti non sono scritti dentro le pagine ma in un unico file, <code>data.js</code>.
+        Ogni tappa è un record con campi fissi. Separare i dati dalla presentazione permette di
+        correggere un luogo una volta sola e vederlo aggiornato sia sulla mappa sia nella cronologia.
+      </p>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Campo</th><th>Contenuto</th><th>Esempio</th></tr>
+          <tr><td><code>date</code></td><td>Anno, mese e giorno, quando noti</td><td>8 maggio 1978</td></tr>
+          <tr><td><code>headline</code></td><td>Titolo della scheda</td><td>Everest senza ossigeno</td></tr>
+          <tr><td><code>lat</code>, <code>lon</code></td><td>Coordinate in gradi decimali</td><td>27.9881, 86.9250</td></tr>
+          <tr><td><code>group</code></td><td>Categoria tematica</td><td>Gli Ottomila</td></tr>
+          <tr><td><code>text</code></td><td>Testo descrittivo</td><td>…</td></tr>
+          <tr><td><code>wiki</code></td><td>Voci di Wikipedia da cui ricavare la foto, in ordine di preferenza</td><td>en:Mount_Everest</td></tr>
+        </table>
+      </div>
+
+      <h2>Le immagini e i diritti</h2>
+      <p>
+        Le fotografie non sono copiate nel sito: vengono richiamate al momento della visita da
+        Wikimedia Commons, scegliendo l'immagine principale della voce di Wikipedia indicata per ogni tappa.
+        Il programma scarta le immagini caricate solo su Wikipedia (spesso coperte da diritti) e le grafiche
+        vettoriali, e usa soltanto file con licenza libera. Per ciascuna foto mostra autore, licenza e
+        collegamento alla pagina del file, come richiedono le licenze Creative Commons.
+      </p>
+      <p>Foto mostrate in questa visita:</p>
+      <ol id="credits"><li>Caricamento…</li></ol>
+
+      <h2>Scelte e limiti</h2>
+      <ul>
+        <li>Le coordinate delle vette sono precise; quelle di pareti, ghiacciai e traversate sono indicative. La traversata dell'Antartide è collocata in un punto simbolico, perché la proiezione di Mercatore non può mostrare il Polo Sud.</li>
+        <li>Le foto illustrano il luogo, non l'evento: nessuna mostra Messner durante l'impresa, perché le fotografie storiche delle spedizioni sono protette da diritto d'autore.</li>
+        <li>Le circostanze della morte di Günther Messner nel 1970 sono state per decenni oggetto di una controversia tra Reinhold e alcuni membri della spedizione. Il ritrovamento dei resti sul versante Diamir, nel 2005, è stato considerato una conferma della sua versione. Il sito riporta i fatti accertati senza entrare nella polemica.</li>
+        <li>I testi sono una sintesi; date e dati andrebbero verificati sulle fonti indicate sotto prima di un uso scientifico.</li>
+      </ul>
+
+      <h2>Possibili sviluppi</h2>
+      <ul>
+        <li>Collegare ogni luogo al suo identificativo <a href="https://www.wikidata.org/" target="_blank" rel="noopener">Wikidata</a>, così che coordinate e altitudini derivino da una fonte aperta e verificabile.</li>
+        <li>Aggiungere un confronto «prima e dopo» dei ghiacciai con JuxtaposeJS, un altro strumento di Knight Lab.</li>
+        <li>Inserire brevi estratti audio di interviste con SoundciteJS (Knight Lab).</li>
+      </ul>
+
+      <h2>Fonti</h2>
+      <ul>
+        <li>Voci di Wikipedia in italiano e inglese su Reinhold Messner e sulle singole montagne.</li>
+        <li>Sito ufficiale del <a href="https://www.messner-mountain-museum.it/" target="_blank" rel="noopener">Messner Mountain Museum</a>.</li>
+        <li>Documentazione di <a href="https://storymap.knightlab.com/advanced/" target="_blank" rel="noopener">StoryMapJS</a> e <a href="https://timeline.knightlab.com/docs/" target="_blank" rel="noopener">TimelineJS</a>.</li>
+      </ul>
+    </article>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="media.js"></script>
+  <script>
+    (async function () {
+      const D = window.MESSNER;
+      const groups = {};
+      D.places.forEach(function (p) { groups[p.group] = (groups[p.group] || 0) + 1; });
+      const years = D.places.map(function (p) { return p.date.year; });
+      const stats = [[D.places.length, "luoghi"]]
+        .concat(Object.keys(groups).map(function (g) { return [groups[g], g]; }))
+        .concat([[Math.min.apply(null, years) + "–" + Math.max.apply(null, years), "anni"]]);
+      document.getElementById("stats").innerHTML = stats.map(function (s) {
+        return "<div><b>" + s[0] + "</b><span>" + s[1] + "</span></div>";
+      }).join("");
+
+      const intro = { headline: "Reinhold Messner", wiki: D.introWiki };
+      const all = [intro].concat(D.places);
+      await resolvePhotos(all);
+      document.getElementById("credits").innerHTML = all.filter(function (p) { return p.photo; })
+        .map(function (p) { return "<li><strong>" + p.headline + "</strong>: " + photoCredit(p.photo) + "</li>"; })
+        .join("") || "<li>Nessuna foto caricata: controlla la connessione.</li>";
+    })();
+  </script>
+</body>
+</html>
