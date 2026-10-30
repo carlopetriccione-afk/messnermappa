@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mappa di Reinhold Messner</title>
+  <meta name="description" content="I luoghi delle imprese e della vita di Reinhold Messner su una mappa interattiva realizzata con StoryMapJS di Knight Lab.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600&family=Barlow+Condensed:wght@600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+  <!-- StoryMapJS (Knight Lab, Northwestern University) -->
+  <link rel="stylesheet" href="https://cdn.knightlab.com/libs/storymapjs/latest/css/storymap.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-head">
+    <div class="brand">
+      <h1>Reinhold Messner</h1>
+      <span>I luoghi di una vita verticale</span>
+    </div>
+    <nav aria-label="Sezioni">
+      <a href="index.html" aria-current="page">Mappa</a>
+      <a href="cronologia.html">Cronologia</a>
+      <a href="progetto.html">Il progetto</a>
+    </nav>
+  </header>
+
+  <main class="stage">
+    <div id="storymap"></div>
+    <div class="loading" id="loading">
+      <strong>Carico le foto da Wikimedia Commons</strong>
+      <div class="bar"><i id="bar"></i></div>
+      <span id="count">0 / 0</span>
+    </div>
+  </main>
+
+  <script src="https://cdn.knightlab.com/libs/storymapjs/latest/js/storymap-min.js"></script>
+  <script src="data.js"></script>
+  <script src="media.js"></script>
+  <script>
+    (async function () {
+      try {
+      const D = window.MESSNER;
+      const intro = { wiki: D.introWiki };
+      const all = [intro].concat(D.places);
+
+      await resolvePhotos(all, function (n, tot) {
+        document.getElementById("bar").style.width = (100 * n / tot) + "%";
+        document.getElementById("count").textContent = n + " / " + tot;
+      });
+
+      function media(p, caption) {
+        return p ? { url: p.url, credit: photoCredit(p), caption: caption || "" } : undefined;
+      }
+
+      const slides = [{
+        type: "overview",
+        text: {
+          headline: D.title,
+          text: "<p>" + D.intro + "</p><p class='meta-line'>Usa le frecce o clicca sui segnaposto per seguire il percorso.</p>"
+        },
+        media: media(intro.photo, "Reinhold Messner")
+      }].concat(D.places.map(function (p) {
+        return {
+          location: { lat: p.lat, lon: p.lon, zoom: p.zoom, line: false },
+          date: formatDate(p.date),
+          text: {
+            headline: p.headline,
+            text: "<p class='meta-line'>" + formatDate(p.date) + " · " + p.place + "</p><p>" + p.text + "</p>"
+          },
+          media: media(p.photo, p.headline)
+        };
+      }));
+
+      const data = {
+        storymap: {
+          language: "it",
+          map_type: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
+          map_subdomains: "abc",
+          attribution: "Mappa: © OpenStreetMap contributors, SRTM · Stile: © OpenTopoMap (CC-BY-SA)",
+          map_as_image: false,
+          line_follows_path: false,
+          call_to_action: true,
+          call_to_action_text: "Inizia il viaggio",
+          slides: slides
+        }
+      };
+
+      const SM = (window.KLStoryMap && KLStoryMap.StoryMap) || (window.VCO && VCO.StoryMap);
+      window.storymap = new SM("storymap", data, {
+        language: "it",
+        map_type: data.storymap.map_type,
+        map_subdomains: "abc",
+        attribution: data.storymap.attribution,
+        line_follows_path: false
+      });
+      window.addEventListener("resize", function () { storymap.updateDisplay(); });
+      document.getElementById("loading").hidden = true;
+      } catch (err) {
+        document.getElementById("loading").innerHTML = "<strong>Impossibile avviare StoryMapJS</strong><span>" + err + "</span><span>Controlla la connessione a internet e ricarica la pagina.</span>";
+        console.error(err);
+      }
+    })();
+  </script>
+</body>
+</html>
